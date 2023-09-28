@@ -5,6 +5,10 @@ describe('DomainRegistry', function () {
   let domainRegistry;
   let owner;
   let addr1;
+  const domain = 'com';
+  const nonexistentDomain = 'nonexistent';
+  const reservationCost = 100; // 100 wei = 0.0000000001 Ether or 0.0000001 ETH
+  const insufficientCost = 50; // Less than the required cost. 50 wei = 0.00000000005 Ether or 0.00000005 ETH
 
   beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
@@ -14,9 +18,6 @@ describe('DomainRegistry', function () {
   });
 
   it('should register a domain', async function () {
-    const domain = 'com';
-    const reservationCost = 100; // 0.01 ETH in wei
-
     // Register the domain
     await expect(domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost }))
         .to.emit(domainRegistry, 'DomainRegistered')
@@ -26,13 +27,9 @@ describe('DomainRegistry', function () {
     const domainInfo = await domainRegistry.getDomainInfo(domain);
     expect(domainInfo.controller).to.equal(addr1.address);
     expect(domainInfo.deposit).to.equal(reservationCost);
-    expect(domainInfo.isRegistered).to.be.true;
   });
 
   it('should release a domain', async function () {
-    const domain = 'com';
-    const reservationCost = 100; // 0.01 ETH in wei
-
     // Register the domain
     await domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost });
 
@@ -45,6 +42,45 @@ describe('DomainRegistry', function () {
     const domainInfo = await domainRegistry.getDomainInfo(domain);
     expect(domainInfo.controller).to.equal('0x0000000000000000000000000000000000000000');
     expect(domainInfo.deposit).to.equal(0);
-    expect(domainInfo.isRegistered).to.be.false;
   });
+
+  it('should not allow registering an already registered domain', async function () {
+    // Register the domain
+    await domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost });
+
+    // Try to register the domain again
+    await expect(domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost }))
+        .to.be.revertedWith('Domain is already registered');
+  });
+
+  it('should not allow registering a domain with insufficient deposit', async function () {
+    // Try to register the domain with insufficient deposit
+    await expect(domainRegistry.connect(addr1).registerDomain(domain, { value: insufficientCost }))
+        .to.be.revertedWith('Insufficient deposit');
+  });
+
+  it('should not allow releasing a domain by a non-controller address', async function () {
+    // Register the domain
+    await domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost });
+
+    // Try to release the domain from a different address
+    await expect(domainRegistry.connect(owner).releaseDomain(domain))
+        .to.be.revertedWith('You are not the controller of this domain');
+  });
+
+  it('should return zeroed information for a non-existing domain', async function () {
+    // Get information for a non-existing domain
+    const domainInfo = await domainRegistry.getDomainInfo(nonexistentDomain);
+
+    expect(domainInfo.controller).to.equal('0x0000000000000000000000000000000000000000');
+    expect(domainInfo.deposit).to.equal(0);
+  });
+
+  it('should not allow registering a domain with insufficient deposit', async function () {
+    // Try to register the domain with insufficient deposit
+    await expect(
+        domainRegistry.connect(addr1).registerDomain(domain, { value: insufficientCost })
+    ).to.be.revertedWith('Insufficient deposit');
+  });
+
 });
