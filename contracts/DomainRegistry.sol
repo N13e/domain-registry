@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract DomainRegistry {
-    uint256 public constant reservationCost = 100; // 0.01 ETH in wei
+    uint256 public constant reservationCost = 100; // 0.0000000001 Ether or 0.0000001 ETH in wei
 
     struct Domain {
         address controller;
