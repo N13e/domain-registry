@@ -51,7 +51,7 @@ contract DomainRegistry {
         emit DomainReleased(domain, msg.sender, deposit);
     }
 
-    function getDomainInfo(string memory domain) external view returns (address controller, uint256 deposit, bool isRegistered) {
-        return (domains[domain].controller, domains[domain].deposit, domains[domain].isRegistered);
+    function getDomainInfo(string memory domain) external view returns (Domain memory) {
+        return domains[domain];
     }
 }
