@@ -9,6 +9,7 @@ contract DomainRegistry {
     }
 
     mapping(string => Domain) private domains;
+    string[] private domainNames;  // Array to store domain names
 
     event DomainRegistered(string domain, address indexed controller, uint256 deposit);
     event DomainReleased(string domain, address indexed controller, uint256 deposit);
@@ -28,6 +29,7 @@ contract DomainRegistry {
             deposit: msg.value
         });
 
+        domainNames.push(domain);  // Add domain to the list
         emit DomainRegistered(domain, msg.sender, msg.value);
     }
 
@@ -42,6 +44,7 @@ contract DomainRegistry {
             deposit: 0
         });
 
+        removeDomainFromList(domain);
         payable(controller).transfer(deposit);
 
         emit DomainReleased(domain, msg.sender, deposit);
@@ -49,5 +52,41 @@ contract DomainRegistry {
 
     function getDomainInfo(string memory domain) external view returns (Domain memory) {
         return domains[domain];
+    }
+
+    function getRegisteredDomainsCount() external view returns (uint256) {
+        return domainNames.length;
+    }
+
+    function getRegisteredDomains() external view returns (string[] memory) {
+        return domainNames;
+    }
+
+    function getDomainsForController(address controller) external view returns (string[] memory) {
+        string[] memory controllerDomains = new string[](domainNames.length);
+        uint256 count = 0;
+        for (uint256 i = 0; i < domainNames.length; i++) {
+            if (domains[domainNames[i]].controller == controller) {
+                controllerDomains[count] = domainNames[i];
+                count++;
+            }
+        }
+        return controllerDomains;
+    }
+    
+    function removeDomainFromList(string memory domain) internal {
+        uint256 indexToRemove;
+        for (uint256 i = 0; i < domainNames.length; i++) {
+            if (keccak256(abi.encodePacked(domainNames[i])) == keccak256(abi.encodePacked(domain))) {
+                indexToRemove = i;
+                break;
+            }
+        }
+
+        if (indexToRemove < domainNames.length) {
+            // Move the last element to the position of the element to delete
+            domainNames[indexToRemove] = domainNames[domainNames.length - 1];
+            domainNames.pop();
+        }
     }
 }
