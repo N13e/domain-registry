@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 contract DomainRegistry {
@@ -7,7 +7,6 @@ contract DomainRegistry {
     struct Domain {
         address controller;
         uint256 deposit;
-        bool isRegistered;
     }
 
     mapping(string => Domain) private domains;
@@ -18,7 +17,7 @@ contract DomainRegistry {
     modifier isValidDomain(string memory domain) {
         require(bytes(domain).length <= 6, "Domain length exceeds maximum of 6 characters");
         require(bytes(domain)[0] != '.', "Domain cannot start with a period");
-        require(domains[domain].isRegistered == false, "Domain is already registered");
+        require(domains[domain].controller == address(0), "Domain is already registered");
         _;
     }
 
@@ -27,8 +26,7 @@ contract DomainRegistry {
 
         domains[domain] = Domain({
             controller: msg.sender,
-            deposit: msg.value,
-            isRegistered: true
+            deposit: msg.value
         });
 
         emit DomainRegistered(domain, msg.sender, msg.value);
@@ -42,8 +40,7 @@ contract DomainRegistry {
 
         domains[domain] = Domain({
             controller: address(0),
-            deposit: 0,
-            isRegistered: false
+            deposit: 0
         });
 
         payable(controller).transfer(deposit);
