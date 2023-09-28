@@ -39,10 +39,7 @@ contract DomainRegistry {
         address controller = domains[domain].controller;
         uint256 deposit = domains[domain].deposit;
 
-        domains[domain] = Domain({
-            controller: address(0),
-            deposit: 0
-        });
+        delete domains[domain];
 
         removeDomainFromList(domain);
         payable(controller).transfer(deposit);
@@ -73,7 +70,7 @@ contract DomainRegistry {
         }
         return controllerDomains;
     }
-    
+
     function removeDomainFromList(string memory domain) internal {
         uint256 indexToRemove;
         for (uint256 i = 0; i < domainNames.length; i++) {
