@@ -99,4 +99,16 @@ describe('DomainRegistry', function () {
     expect(updatedCountNumber).to.equal(initialCountNumber + 1);
   });
 
+  it('should return the list of registered domains', async function () {
+    // Register some domains
+    await domainRegistry.connect(addr1).registerDomain('com', { value: reservationCost });
+    await domainRegistry.connect(addr1).registerDomain('net', { value: reservationCost });
+
+    const registeredDomains = await domainRegistry.getRegisteredDomains();
+
+    // Check if the registered domains are in the list
+    expect(registeredDomains).to.include('com');
+    expect(registeredDomains).to.include('net');
+  });
+
 });
