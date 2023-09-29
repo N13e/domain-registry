@@ -6,6 +6,7 @@ describe('DomainRegistry', function () {
   let owner;
   let addr1;
   const domain = 'com';
+  const domain2 = 'net';
   const nonexistentDomain = 'nonexistent';
   const reservationCost = 100; // 100 wei = 0.0000000001 Ether or 0.0000001 ETH
   const insufficientCost = 50; // Less than the required cost. 50 wei = 0.00000000005 Ether or 0.00000005 ETH
@@ -101,14 +102,14 @@ describe('DomainRegistry', function () {
 
   it('should return the list of registered domains', async function () {
     // Register some domains
-    await domainRegistry.connect(addr1).registerDomain('com', { value: reservationCost });
-    await domainRegistry.connect(addr1).registerDomain('net', { value: reservationCost });
+    await domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost });
+    await domainRegistry.connect(addr1).registerDomain(domain2, { value: reservationCost });
 
     const registeredDomains = await domainRegistry.getRegisteredDomains();
 
     // Check if the registered domains are in the list
-    expect(registeredDomains).to.include('com');
-    expect(registeredDomains).to.include('net');
+    expect(registeredDomains).to.include(domain);
+    expect(registeredDomains).to.include(domain2);
   });
 
 });
