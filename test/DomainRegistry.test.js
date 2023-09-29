@@ -83,4 +83,20 @@ describe('DomainRegistry', function () {
     ).to.be.revertedWith('Insufficient deposit');
   });
 
+  it('should return the count of registered domains', async function () {
+    const initialCount = await domainRegistry.getRegisteredDomainsCount();
+
+    // Register a domain
+    await domainRegistry.connect(addr1).registerDomain(domain, { value: reservationCost });
+
+    const updatedCount = await domainRegistry.getRegisteredDomainsCount();
+
+    // Convert initialCount and updatedCount to JavaScript numbers for comparison
+    const initialCountNumber = Number(initialCount);
+    const updatedCountNumber = Number(updatedCount);
+
+    // Check that the count increased by 1
+    expect(updatedCountNumber).to.equal(initialCountNumber + 1);
+  });
+
 });

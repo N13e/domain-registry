@@ -72,18 +72,14 @@ contract DomainRegistry {
     }
 
     function removeDomainFromList(string memory domain) internal {
-        uint256 indexToRemove;
         for (uint256 i = 0; i < domainNames.length; i++) {
             if (keccak256(abi.encodePacked(domainNames[i])) == keccak256(abi.encodePacked(domain))) {
-                indexToRemove = i;
+                if (i != domainNames.length - 1) {
+                    domainNames[i] = domainNames[domainNames.length - 1];
+                }
+                domainNames.pop();
                 break;
             }
-        }
-
-        if (indexToRemove < domainNames.length) {
-            // Move the last element to the position of the element to delete
-            domainNames[indexToRemove] = domainNames[domainNames.length - 1];
-            domainNames.pop();
         }
     }
 }
