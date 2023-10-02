@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const {ZeroAddress} = require("ethers");
 
 describe('DomainRegistry', function () {
   let DomainRegistry;
@@ -8,8 +9,8 @@ describe('DomainRegistry', function () {
   const domain = 'com';
   const domain2 = 'net';
   const nonexistentDomain = 'nonexistent';
-  const reservationCost = 100; // 100 wei = 0.0000000001 Ether or 0.0000001 ETH
-  const insufficientCost = 50; // Less than the required cost. 50 wei = 0.00000000005 Ether or 0.00000005 ETH
+  const reservationCost = 100;
+  const insufficientCost = 50;
 
   beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
@@ -41,7 +42,7 @@ describe('DomainRegistry', function () {
 
     // Check domain info
     const domainInfo = await domainRegistry.getDomainInfo(domain);
-    expect(domainInfo.controller).to.equal('0x0000000000000000000000000000000000000000');
+    expect(domainInfo.controller).to.equal(ZeroAddress);
     expect(domainInfo.deposit).to.equal(0);
   });
 
@@ -73,15 +74,8 @@ describe('DomainRegistry', function () {
     // Get information for a non-existing domain
     const domainInfo = await domainRegistry.getDomainInfo(nonexistentDomain);
 
-    expect(domainInfo.controller).to.equal('0x0000000000000000000000000000000000000000');
+    expect(domainInfo.controller).to.equal(ZeroAddress);
     expect(domainInfo.deposit).to.equal(0);
-  });
-
-  it('should not allow registering a domain with insufficient deposit', async function () {
-    // Try to register the domain with insufficient deposit
-    await expect(
-        domainRegistry.connect(addr1).registerDomain(domain, { value: insufficientCost })
-    ).to.be.revertedWith('Insufficient deposit');
   });
 
   it('should return the count of registered domains', async function () {

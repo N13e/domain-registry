@@ -2,14 +2,14 @@
 pragma solidity ^0.8.20;
 
 contract DomainRegistry {
-    uint256 public constant reservationCost = 100; // 0.0000000001 Ether or 0.0000001 ETH in wei
+    uint256 public constant reservationCost = 100;
     struct Domain {
         address controller;
         uint256 deposit;
     }
 
     mapping(string => Domain) private domains;
-    string[] private domainNames;  // Array to store domain names
+    string[] private domainNames;
 
     event DomainRegistered(string domain, address indexed controller, uint256 deposit);
     event DomainReleased(string domain, address indexed controller, uint256 deposit);
@@ -29,7 +29,7 @@ contract DomainRegistry {
             deposit: msg.value
         });
 
-        domainNames.push(domain);  // Add domain to the list
+        domainNames.push(domain);
         emit DomainRegistered(domain, msg.sender, msg.value);
     }
 
