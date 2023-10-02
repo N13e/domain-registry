@@ -7,7 +7,7 @@ describe('DomainRegistry', function () {
   let addr1;
   const domain = 'com';
   const domain2 = 'net';
-  const nonexistentDomain = 'nonexistent';
+  const nonexistentDomain = 'ned';
   const reservationCost = ethers.parseUnits("100000000000000000", "wei");
   const insufficientCost = ethers.parseUnits("50000000000000000", "wei");
 
