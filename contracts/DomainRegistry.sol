@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 contract DomainRegistry {
-    uint256 public constant reservationCost = 100;
+    uint256 public constant reservationCost = 100000000000000000;
     struct Domain {
         address controller;
         uint256 deposit;

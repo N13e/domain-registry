@@ -9,8 +9,8 @@ describe('DomainRegistry', function () {
   const domain = 'com';
   const domain2 = 'net';
   const nonexistentDomain = 'nonexistent';
-  const reservationCost = 100;
-  const insufficientCost = 50;
+  const reservationCost = ethers.parseUnits("100000000000000000", "wei");
+  const insufficientCost = ethers.parseUnits("50000000000000000", "wei");
 
   beforeEach(async function () {
     [owner, addr1] = await ethers.getSigners();
