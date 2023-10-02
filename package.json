@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A solution for a simple domain registry",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "hardhat:node": "hardhat node",
     "hardhat:compile": "hardhat compile",
