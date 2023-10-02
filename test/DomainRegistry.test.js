@@ -1,5 +1,4 @@
 const { expect } = require('chai');
-const {ZeroAddress} = require("ethers");
 
 describe('DomainRegistry', function () {
   let DomainRegistry;
@@ -42,7 +41,7 @@ describe('DomainRegistry', function () {
 
     // Check domain info
     const domainInfo = await domainRegistry.getDomainInfo(domain);
-    expect(domainInfo.controller).to.equal(ZeroAddress);
+    expect(domainInfo.controller).to.equal(ethers.ZeroAddress);
     expect(domainInfo.deposit).to.equal(0);
   });
 
@@ -74,7 +73,7 @@ describe('DomainRegistry', function () {
     // Get information for a non-existing domain
     const domainInfo = await domainRegistry.getDomainInfo(nonexistentDomain);
 
-    expect(domainInfo.controller).to.equal(ZeroAddress);
+    expect(domainInfo.controller).to.equal(ethers.ZeroAddress);
     expect(domainInfo.deposit).to.equal(0);
   });
 
